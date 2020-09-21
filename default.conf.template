@@ -1,0 +1,8 @@
+server {
+  listen $PORT default_server;
+
+  location / {
+    root   /var/www/html;
+    autoindex on;
+  }
+}
