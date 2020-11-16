@@ -1,0 +1,23 @@
+{
+    "name": "python-aria-mirror-bot ",
+    "description": "Telegram mirror bot with python",
+    "logo": "https://telegra.ph/file/e15e9ac9c5885b015e3ab.jpg",
+    "keywords": [
+      "telegram",
+      "bot",
+      "aria",
+      "python"
+    ],
+    "repository": "https://github.com/keshav12-36/Auto",
+    "website": "https://afdulfauzan.tech",
+    "success_url": "https://t.me/afdlfz_mirror_bot",
+    "stack": "container",
+"addons": [
+  {
+    "plan": "heroku-postgresql",
+    "options": {
+      "version": "12"
+    }
+  }
+]
+}
