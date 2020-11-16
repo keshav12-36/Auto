@@ -21,7 +21,6 @@ RUN apt-get update \
     gnupg2 \
     openssl \
     ffmpeg \
-    youtube-dl \
     zip \
     ca-certificates \
     && update-ca-certificates \
