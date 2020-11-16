@@ -1,4 +1,4 @@
-FROM node:14
+FROM ubuntu:18.04
 
 RUN dpkg --add-architecture i386
 RUN apt-get update
