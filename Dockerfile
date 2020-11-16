@@ -1,81 +1,45 @@
-FROM node:alpine
+FROM node:14
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-
-RUN apk add --update --no-cache \
-  c-ares \
-  crypto++ \
-  nginx \
-  python3 \
-  python3-pip \
-  build-base \
-  curl \
-  wget \
-  aria2 \
-  go \
-  git \
-  libcurl \
-  libtool \
-  libuv \
-  pcre \
-  pcre-dev \
-  readline \
-  sqlite \
-  sqlite-dev \
-  zlib
-RUN apk add --no-cache --virtual .build-deps \
-  autoconf \
-  automake \
-  c-ares-dev \
-  crypto++-dev \
-  curl \
-  curl-dev \
-  cvs \
-  file \
-  g++ \
-  gcc \
-  git \
-  libc-dev \
-  libffi-dev \
-  libressl2.7-libcrypto \
-  libressl-dev \
-  libsodium \
-  libsodium-dev \
-  libuv-dev \
-  make \
-  openssl \
-  openssl-dev \
-  readline-dev \
-  zlib-dev \
-  \
-  && cd /opt \
-  && cvs -z3 -d:pserver:anonymous@freeimage.cvs.sourceforge.net:/cvsroot/freeimage co -P FreeImage \
-  && cd FreeImage \
-  && make -j $(nproc) \
-  && make install \
-  \
-  && git clone https://github.com/meganz/MEGAcmd.git /opt/MEGAcmd \
-  && cd /opt/MEGAcmd \
-  && git submodule update --init --recursive \
-  && sh autogen.sh \
-  && ./configure \
-  && make -j $(nproc) \
-  && make install \
-  \
-  && cd /opt/FreeImage \
-  && make clean \
-  && cd / \
-  && rm -rf /opt/FreeImage \
-  \
-  && apk del .build-deps
-  
+RUN dpkg --add-architecture i386
+RUN apt-get update
+RUN apt-get -y dist-upgrade
+RUN apt-get update &&  apt-get install -y  curl lsb-release
+RUN apt-get update \
+    && apt-get -y install \
+    --no-install-recommends \
+    wget \
+    aria2 \
+    gettext-base \
+    python3 \
+    python3-pip \
+    make \
+    nginx \
+    g++ \
+    unzip \
+    busybox \
+    build-essential \
+    gnupg2 \
+    openssl \
+    ffmpeg \
+    youtube-dl \
+    zip \
+    ca-certificates \
+    && update-ca-certificates \
+    && curl  \
+    https://mega.nz/linux/MEGAsync/Debian_9.0/i386/megacmd-Debian_9.0_i386.deb \
+    --output /tmp/megacmd.deb \
+    && apt install /tmp/megacmd.deb -y --allow-remove-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/megacmd.*
+#Rclone
+RUN curl https://rclone.org/install.sh | bash  
 COPY default.conf.template /etc/nginx/conf.d/default.conf.template
 COPY nginx.conf /etc/nginx/nginx.conf
-
+ARG PORT=80
+ENV PORT $PORT
   # setup workdir
 WORKDIR /var/www/html/bot
 COPY . .
 RUN npm install
-RUN rm -rf /var/www/html/bot/{default.conf.template,package-lock.json,package.json,config.json,nginx.conf,lib,heroku.yml,README.md,LICENSE}
-CMD /bin/bash -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g 'daemon off;' && bash start.sh
+CMD [ "node", "/var/www/html/bot/server.js" ]
 
