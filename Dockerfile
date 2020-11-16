@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:lts
 
 # Install all the required packages
 RUN apt-get update
